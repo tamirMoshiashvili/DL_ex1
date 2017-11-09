@@ -10,12 +10,10 @@ def softmax(x):
     x: a n-dim vector (numpy array)
     returns: an n-dim vector (numpy array) of softmax values
     """
-    # YOUR CODE HERE
-    # Your code should be fast, so use a vectorized implementation using numpy,
-    # don't use any loops.
-    # With a vectorized implementation, the code should be no more than 2 lines.
-    #
-    # For numeric stability, use the identify you proved in Ex 2 Q1.
+    x -= np.max(x)  # For numeric stability, we use the identify we proved in Ex 2 Q1.
+    x = np.exp(x)
+    x /= np.sum(x)
+
     return x
 
 
@@ -25,13 +23,15 @@ def classifier_output(x, params):
     of a log-linear classifier with given params on input x.
     """
     W, b = params
-    # YOUR CODE HERE.
+
+    probs = softmax(np.dot(W, x) + b)
+
     return probs
 
 
 def predict(x, params):
     """
-    Returnss the prediction (highest scoring class id) of a
+    Returns the prediction (highest scoring class id) of a
     a log-linear classifier with given parameters on input x.
     """
     return np.argmax(classifier_output(x, params))
@@ -50,7 +50,17 @@ def loss_and_gradients(x, y, params):
     gb: vector, gradients of b
     """
     W, b = params
+
     # YOU CODE HERE
+    loss = -(classifier_output(x, params)[y])
+    probs = classifier_output(x, params)
+
+    gW = x * probs
+    gW[y] -= x[y]
+
+    probs[y] -= 1
+    gb = probs
+
     return loss, [gW, gb]
 
 
