@@ -24,7 +24,7 @@ def classifier_output(x, params):
     """
     W, b = params
 
-    probs = softmax(np.dot(W, x) + b)
+    probs = softmax(np.dot(x, W) + b)
 
     return probs
 
@@ -52,14 +52,18 @@ def loss_and_gradients(x, y, params):
     W, b = params
 
     # YOU CODE HERE
-    loss = -(classifier_output(x, params)[y])
     probs = classifier_output(x, params)
+    loss = -np.log(probs[y])
 
-    gW = x * probs
-    gW[y] -= x[y]
+    # gradient of b
+    gb = np.copy(probs)
+    gb[y] -= 1
 
-    probs[y] -= 1
-    gb = probs
+    # gradient of W
+    gW = np.zeros(W.shape)
+    # grad of W[i, j] = xi * y_hat[j] - y[j]
+    for (i, j) in np.ndindex(W.shape):
+        gW[i, j] = x[i] * probs[j] - (j == y) * x[i]
 
     return loss, [gW, gb]
 

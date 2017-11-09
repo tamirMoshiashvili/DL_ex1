@@ -5,8 +5,8 @@ STUDENT = {'name': 'Tamir Moshiashvili',
 
 
 def gradient_check(f, x):
-    """ 
-    Gradient check for a function f 
+    """
+    Gradient check for a function f
     - f should be a function that takes a single argument and outputs the cost and its gradients
     - x is the point (numpy array) to check the gradient at
     """
@@ -18,7 +18,11 @@ def gradient_check(f, x):
     while not it.finished:
         ix = it.multi_index
 
-        numeric_gradient = f(x[ix] + h)[0] - f(x[ix] - h)[0]
+        x_plus = np.copy(x)
+        x_plus[ix] += h
+        x_minus = np.copy(x)
+        x_minus[ix] -= h
+        numeric_gradient = f(x_plus)[0] - f(x_minus)[0]
         numeric_gradient /= 2 * h
 
         # Compare gradients
