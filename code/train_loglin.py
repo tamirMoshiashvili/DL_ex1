@@ -1,23 +1,26 @@
 import loglinear as ll
 import random
+import numpy as np
+import utils
 
-STUDENT={'name': 'YOUR NAME',
-         'ID': 'YOUR ID NUMBER'}
+STUDENT = {'name': 'Tamir Moshiashvili',
+           'ID': '316131259'}
+
 
 def feats_to_vec(features):
-    # YOUR CODE HERE.
-    # Should return a numpy vector of features.
-    return None
+    return np.array(features)
+
 
 def accuracy_on_dataset(dataset, params):
     good = bad = 0.0
     for label, features in dataset:
-        # YOUR CODE HERE
-        # Compute the accuracy (a scalar) of the current parameters
-        # on the dataset.
-        # accuracy is (correct_predictions / all_predictions)
-        pass
+        y_prdeiction = ll.predict(features, params)
+        if y_prdeiction == label:
+            good += 1
+        else:
+            bad += 1
     return good / (good + bad)
+
 
 def train_classifier(train_data, dev_data, num_iterations, learning_rate, params):
     """
@@ -30,16 +33,19 @@ def train_classifier(train_data, dev_data, num_iterations, learning_rate, params
     params: list of parameters (initial values)
     """
     for I in xrange(num_iterations):
-        cum_loss = 0.0 # total loss in this iteration.
+        cum_loss = 0.0  # total loss in this iteration.
         random.shuffle(train_data)
         for label, features in train_data:
-            x = feats_to_vec(features) # convert features to a vector.
-            y = label                  # convert the label to number if needed.
-            loss, grads = ll.loss_and_gradients(x,y,params)
+            x = features  # numpy vector.
+            y = label  # a number.
+            loss, grads = ll.loss_and_gradients(x, y, params)
             cum_loss += loss
-            # YOUR CODE HERE
-            # update the parameters according to the gradients
-            # and the learning rate.
+
+            # SGD update parameters
+            W, b = params
+            updated_W = W - learning_rate * grads[0]
+            updated_b = b - learning_rate * grads[1]
+            params = (updated_W, updated_b)
 
         train_loss = cum_loss / len(train_data)
         train_accuracy = accuracy_on_dataset(train_data, params)
@@ -47,13 +53,42 @@ def train_classifier(train_data, dev_data, num_iterations, learning_rate, params
         print I, train_loss, train_accuracy, dev_accuracy
     return params
 
+
+def bigrams2frequencies(bigrams):
+    indexed_vocab = utils.F2I
+    features = np.zeros(len(indexed_vocab))
+    for bigram in bigrams & indexed_vocab.keys():
+        features[indexed_vocab[bigram]] = bigrams.count(bigram)
+
+    # normalized
+    return features / len(bigrams)
+
+
 if __name__ == '__main__':
     # YOUR CODE HERE
     # write code to load the train and dev sets, set up whatever you need,
     # and call train_classifier.
-    
-    # ...
-   
-    params = ll.create_classifier(in_dim, out_dim)
-    trained_params = train_classifier(train_data, dev_data, num_iterations, learning_rate, params)
 
+    # ...
+    train_set = utils.TRAIN
+    dev_set = utils.DEV
+    indexed_langs = utils.L2I
+    indexed_vocab = utils.F2I
+
+    num_langs = len(indexed_langs)
+    vocab_size = len(indexed_vocab)
+    num_iterations = 50
+    learning_rate = 5e-4
+
+    train_data = list()
+    for item in train_set:
+        lang, bigrams = indexed_langs[item[0]], bigrams2frequencies(item[1])
+        train_data.append((lang, bigrams))
+
+    dev_data = list()
+    for item in dev_set:
+        lang, bigrams = indexed_langs[item[0]], bigrams2frequencies(item[1])
+        dev_data.append((lang, bigrams))
+
+    params = ll.create_classifier(vocab_size, num_langs)
+    trained_params = train_classifier(train_data, dev_data, num_iterations, learning_rate, params)
