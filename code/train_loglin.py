@@ -47,6 +47,7 @@ def train_classifier(train_data, dev_data, num_iterations, learning_rate, params
             updated_b = b - learning_rate * grads[1]
             params = (updated_W, updated_b)
 
+        # notify progress
         train_loss = cum_loss / len(train_data)
         train_accuracy = accuracy_on_dataset(train_data, params)
         dev_accuracy = accuracy_on_dataset(dev_data, params)
@@ -55,30 +56,34 @@ def train_classifier(train_data, dev_data, num_iterations, learning_rate, params
 
 
 def bigrams2frequencies(bigrams):
+    """
+    bigrams: list of bigrams.
+
+    Create numpy-vector that contain the frequency of each bigram in bigrams.
+    """
     indexed_vocab = utils.F2I
     features = np.zeros(len(indexed_vocab))
-    for bigram in bigrams & indexed_vocab.keys():
+    for bigram in set(bigrams) & set(indexed_vocab.keys()):
         features[indexed_vocab[bigram]] = bigrams.count(bigram)
 
     # normalized
-    return features / len(bigrams)
+    return 100 * features / len(bigrams)
 
 
 if __name__ == '__main__':
-    # YOUR CODE HERE
-    # write code to load the train and dev sets, set up whatever you need,
-    # and call train_classifier.
-
-    # ...
+    # load sets from utils
     train_set = utils.TRAIN
     dev_set = utils.DEV
     indexed_langs = utils.L2I
     indexed_vocab = utils.F2I
 
+    # shapes
     num_langs = len(indexed_langs)
     vocab_size = len(indexed_vocab)
-    num_iterations = 50
-    learning_rate = 5e-4
+
+    # training parameters
+    num_iterations = 15
+    learning_rate = 0.2
 
     train_data = list()
     for item in train_set:
