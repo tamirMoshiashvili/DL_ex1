@@ -1,14 +1,7 @@
-import loglinear as ll
+import code.loglinear as ll
 import random
 import numpy as np
-import utils
-
-STUDENT = {'name': 'Tamir Moshiashvili',
-           'ID': '316131259'}
-
-
-def feats_to_vec(features):
-    return np.array(features)
+import code.utils
 
 
 def accuracy_on_dataset(dataset, params):
@@ -22,15 +15,14 @@ def accuracy_on_dataset(dataset, params):
     return good / (good + bad)
 
 
-def train_classifier(train_data, dev_data, num_iterations, learning_rate, params):
+def train_classifier(train_data, num_iterations, learning_rate, params):
     """
-    Create and train a classifier, and return the parameters.
+        Create and train a classifier, and return the parameters.
 
-    train_data: a list of (label, feature) pairs.
-    dev_data  : a list of (label, feature) pairs.
-    num_iterations: the maximal number of training iterations.
-    learning_rate: the learning rate to use.
-    params: list of parameters (initial values)
+        train_data: a list of (label, feature) pairs.
+        num_iterations: the maximal number of training iterations.
+        learning_rate: the learning rate to use.
+        params: list of parameters (initial values)
     """
     for I in xrange(num_iterations):
         cum_loss = 0.0  # total loss in this iteration.
@@ -50,8 +42,7 @@ def train_classifier(train_data, dev_data, num_iterations, learning_rate, params
         # notify progress
         train_loss = cum_loss / len(train_data)
         train_accuracy = accuracy_on_dataset(train_data, params)
-        dev_accuracy = accuracy_on_dataset(dev_data, params)
-        print I, train_loss, train_accuracy, dev_accuracy
+        print I, train_loss, train_accuracy
     return params
 
 
@@ -61,7 +52,7 @@ def bigrams2frequencies(bigrams):
 
     Create numpy-vector that contain the frequency of each bigram in bigrams.
     """
-    indexed_vocab = utils.F2I
+    indexed_vocab = code.utils.F2I
     features = np.zeros(len(indexed_vocab))
     for bigram in set(bigrams) & set(indexed_vocab.keys()):
         features[indexed_vocab[bigram]] = bigrams.count(bigram)
@@ -70,12 +61,17 @@ def bigrams2frequencies(bigrams):
     return 100 * features / float(len(bigrams))
 
 
-if __name__ == '__main__':
+def train():
+    """
+    train the log linear model with the train and dev sets
+    :return: trained parameters
+    """
+
     # load sets from utils
-    train_set = utils.TRAIN
-    dev_set = utils.DEV
-    indexed_langs = utils.L2I
-    indexed_vocab = utils.F2I
+    train_set = code.utils.TRAIN
+    dev_set = code.utils.DEV
+    indexed_langs = code.utils.L2I
+    indexed_vocab = code.utils.F2I
 
     # shapes
     num_langs = len(indexed_langs)
@@ -95,5 +91,44 @@ if __name__ == '__main__':
         lang, bigrams = indexed_langs[item[0]], bigrams2frequencies(item[1])
         dev_data.append((lang, bigrams))
 
+    # get the trained parameters
     params = ll.create_classifier(vocab_size, num_langs)
-    trained_params = train_classifier(train_data, dev_data, num_iterations, learning_rate, params)
+    trained_params = train_classifier(train_data, num_iterations, learning_rate, params)
+    trained_params = train_classifier(dev_data, num_iterations, learning_rate, trained_params)
+    return trained_params
+
+
+def predict_test_with_loglin():
+    """
+    create list of predictions on test set
+    :return: list of predictions
+    """
+    pred = list()
+
+    # train the model
+    test_set = code.utils.TEST
+    test_data = list()
+    for item in test_set:
+        bigrams = bigrams2frequencies(item[1])
+        test_data.append(bigrams)
+
+    # make predictions
+    I2L = code.utils.I2L
+    params = train()
+    for x in test_data:
+        pred.append(I2L[ll.predict(x, params)])
+
+    return pred
+
+if __name__ == '__main__':
+    """
+        predict labels for test set with log linear model
+    """
+    pred = predict_test_with_loglin()  # get predictions
+
+    # write predictions to the file
+    my_file = open('test.pred', 'w')
+    for item in pred:
+        my_file.write(item + '\n')
+
+    my_file.close()
