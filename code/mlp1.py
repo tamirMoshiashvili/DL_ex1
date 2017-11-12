@@ -21,7 +21,7 @@ def classifier_output(x, params):
     U, W, b, b_tag = params
 
     tan_h = np.tanh(np.dot(x, W) + b)
-    probs = softmax(np.dot(U, tan_h) + b_tag)
+    probs = softmax(np.dot(tan_h, U) + b_tag)
 
     return probs
 
@@ -50,7 +50,7 @@ def loss_and_gradients(x, y, params):
     loss = -np.log(y_hat[y])
 
     tan_h = np.tanh(np.dot(x, W) + b)
-    probs = softmax(np.dot(U, tan_h) + b_tag)
+    probs = softmax(np.dot(tan_h, U) + b_tag)
     layer1_der = 1 - tan_h ** 2
 
     # gradient of b_tag
@@ -82,8 +82,8 @@ def create_classifier(in_dim, hid_dim, out_dim):
     and output dimension out_dim.
     """
     # Xavier Glorot init
-    Glorot_init = lambda n, m: np.random.uniform(-np.sqrt(6.0 / (n + m)), np.sqrt(6.0 / (n + m)), (n, m) \
-        if (n != 1 and m != 1) else n * m)
+    Glorot_init = lambda n, m: np.random.uniform(-np.sqrt(6.0 / (n + m)), np.sqrt(6.0 / (n + m)),
+                                                 (n, m) if (n != 1 and m != 1) else n * m)
 
     U = Glorot_init(hid_dim, out_dim)
     W = Glorot_init(in_dim, hid_dim)
