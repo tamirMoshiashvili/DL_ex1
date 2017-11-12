@@ -51,7 +51,6 @@ def loss_and_gradients(x, y, params):
     """
     W, b = params
 
-    # YOU CODE HERE
     probs = classifier_output(x, params)
     loss = -np.log(probs[y])
 
