@@ -2,6 +2,9 @@
    but using mlp1, the best accuracy was 87.33% on the dev-set,
    so there is a slightly better accuracy with the mlp.
 
+2. The best accuracy on the dev-set with loglin model and unigrams was 72%.
+   The best accuracy on the dev-set with mlp1 model and unigrams was 69%.
+
 * To Delete *
 # loglin with bigrams - 30 iterations, rate = 0.05 - dev accuracy 85%
 # mlp1 with bigrams - 30 iterations, 10 hidden layers, rate = 0.05 - dev accuracy 83%

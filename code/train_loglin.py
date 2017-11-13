@@ -56,29 +56,14 @@ def train_classifier(train_data, dev_data, num_iterations, learning_rate, params
 
 
 if __name__ == '__main__':
-    # load sets from utils
-    train_set = utils.TRAIN
-    dev_set = utils.DEV
-    indexed_langs = utils.L2I
-    indexed_vocab = utils.F2I
-
-    # shapes
-    num_langs = len(indexed_langs)
-    vocab_size = len(indexed_vocab)
+    model = 'unigrams'
 
     # training parameters
     num_iterations = 30
     learning_rate = 1e-3
 
-    train_data = list()
-    for item in train_set:
-        lang, bigrams = indexed_langs[item[0]], utils.bigrams_to_frequencies(item[1])
-        train_data.append((lang, bigrams))
-
-    dev_data = list()
-    for item in dev_set:
-        lang, bigrams = indexed_langs[item[0]], utils.bigrams_to_frequencies(item[1])
-        dev_data.append((lang, bigrams))
+    # get params
+    vocab_size, num_langs, train_data, dev_data = utils.get_unigrams_params()
 
     params = ll.create_classifier(vocab_size, num_langs)
     trained_params = train_classifier(train_data, dev_data, num_iterations, learning_rate, params)
