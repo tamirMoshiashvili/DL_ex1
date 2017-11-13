@@ -99,7 +99,7 @@ if __name__ == '__main__':
     # If they pass, it is likely, but not certainly, correct.
     from grad_check import gradient_check
 
-    U, W, b, b_tag = create_classifier(3, 6, 5)
+    U, W, b, b_tag = create_classifier(3, 7, 9)
 
 
     def _loss_and_U_grad(U):

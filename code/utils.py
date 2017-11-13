@@ -35,3 +35,19 @@ F2I = {f: i for i, f in enumerate(list(sorted(vocab)))}
 
 # IDs to label strings
 I2L = {i:l for i,l in enumerate(list(sorted(set([l for l,t in TRAIN]))))}
+
+
+def bigrams_to_frequencies(bigrams):
+    """
+    bigrams: list of bigrams.
+
+    Create numpy-vector that contain the frequency of each bigram in bigrams.
+    """
+    import numpy as np
+
+    features = np.zeros(len(F2I))
+    for bigram in set(bigrams) & set(F2I.keys()):
+        features[F2I[bigram]] = bigrams.count(bigram)
+
+    # normalized
+    return 100 * features / float(len(bigrams))
