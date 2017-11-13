@@ -67,8 +67,8 @@ if __name__ == '__main__':
     vocab_size = len(indexed_vocab)
 
     # training parameters
-    num_iterations = 15
-    learning_rate = 0.2
+    num_iterations = 30
+    learning_rate = 1e-3
 
     train_data = list()
     for item in train_set:

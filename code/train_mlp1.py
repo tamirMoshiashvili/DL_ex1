@@ -62,11 +62,11 @@ if __name__ == '__main__':
     # shapes
     num_langs = len(indexed_langs)
     vocab_size = len(indexed_vocab)
-    hid_dim = 4
+    hid_dim = 30
 
     # training parameters
-    num_iterations = 15
-    learning_rate = 0.05
+    num_iterations = 30
+    learning_rate = 1e-3
 
     train_data = list()
     for item in train_set:
