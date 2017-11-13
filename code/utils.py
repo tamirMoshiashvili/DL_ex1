@@ -128,3 +128,13 @@ def get_bigrams_params():
         bi_dev_data.append((lang, bigrams))
 
     return bi_vocab_size, bi_num_langs, bi_train_data, bi_dev_data
+
+
+def get_xor_params():
+    xor_in_dim = xor_out_dim = 2
+    xor_train_data = [(1, [0, 0]),
+                      (0, [0, 1]),
+                      (0, [1, 0]),
+                      (1, [1, 1])]
+    xor_dev_data = ''
+    return xor_in_dim, xor_out_dim, xor_train_data, xor_dev_data

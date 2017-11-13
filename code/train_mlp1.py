@@ -7,6 +7,10 @@ STUDENT = {'name': 'Tamir Moshiashvili',
 
 
 def accuracy_on_dataset(dataset, params):
+    # in case of no data set, like xor
+    if not dataset:
+        return 0
+
     good = bad = 0.0
     for label, features in dataset:
         y_prediction = mlp1.predict(features, params)
@@ -53,12 +57,24 @@ def train_classifier(train_data, dev_data, num_iterations, learning_rate, params
 
 
 if __name__ == '__main__':
+    # optional models - xor, unigrams, bigrams (use the utils.<function> associated with the model)
+
+    model = 'xor'
+    if model == 'xor':
+        in_dim, out_dim, train_data, dev_data = utils.get_xor_params()
+        hid_dim = 5
+        num_iterations = 50
+        learning_rate = 0.2
+        params = mlp1.create_classifier(in_dim, hid_dim, out_dim)
+        train_classifier(train_data, '', num_iterations, learning_rate, params)
+        exit()
+
     model = 'unigrams'
 
     # training parameters
     hid_dim = 30
     num_iterations = 30
-    learning_rate = 1e-4
+    learning_rate = 1e-3
 
     # get params
     vocab_size, num_langs, train_data, dev_data = utils.get_unigrams_params()

@@ -5,9 +5,5 @@
 2. The best accuracy on the dev-set with loglin model and unigrams was 72%.
    The best accuracy on the dev-set with mlp1 model and unigrams was 69%.
 
-* To Delete *
-# loglin with bigrams - 30 iterations, rate = 0.05 - dev accuracy 85%
-# mlp1 with bigrams - 30 iterations, 10 hidden layers, rate = 0.05 - dev accuracy 83%
-
-# loglin with bigrams - 30 iterations, rate = 1e-3 - dev accuracy 86.67%
-# mlp1 with bigrams - 30 iterations, 30 hidden layers, rate = 1e-3  - dev accuracy 87.33%
+3. It took about 15 to 30 iterations to solve the xor,
+   with a learning rate of 0.2, and hid_dim = 5
